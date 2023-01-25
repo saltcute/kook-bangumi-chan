@@ -1,5 +1,6 @@
+import auth from 'configs/auth';
 import { bot } from 'init/client';
-import { echoMenu } from './commands/echo/echo.menu';
+import { bgmMenu } from './commands/echo/bgm.menu';
 
 bot.messageSource.on('message', (e) => {
     bot.logger.debug(`received:`, e);
@@ -7,7 +8,7 @@ bot.messageSource.on('message', (e) => {
     //console.log(e);
 });
 
-bot.addCommands(echoMenu);
+bot.addCommands(bgmMenu);
 
 bot.connect();
 

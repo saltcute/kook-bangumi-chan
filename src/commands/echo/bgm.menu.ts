@@ -1,9 +1,9 @@
 import { Card, MenuCommand } from 'kbotify';
-import { echoKmd } from './echo.kmd.app';
+import { bgmKmd } from './bgm.get.app';
 
-class EchoMenu extends MenuCommand {
-    code = 'echo';
-    trigger = 'echo';
+class BgmMenu extends MenuCommand {
+    code = 'bgm';
+    trigger = 'bgm';
     help = '如需测试KMarkDown请发送".echo kmd"';
 
     intro = '复读菜单';
@@ -11,4 +11,4 @@ class EchoMenu extends MenuCommand {
     useCardMenu = true; // 使用卡片菜单
 }
 
-export const echoMenu = new EchoMenu(echoKmd);
+export const bgmMenu = new BgmMenu(bgmKmd);
