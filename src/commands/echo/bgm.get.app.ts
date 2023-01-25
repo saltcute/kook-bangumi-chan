@@ -45,7 +45,7 @@ type calendar = {
             small: string,
             grid: string
         },
-        collection: {
+        collection?: {
             doing: number
         }
     }[]
@@ -67,7 +67,7 @@ class BgmKmd extends AppCommand {
                     let ca = a.rank || 11451419;
                     let cb = b.rank || 11451419;
                     return ca - cb
-                } else if (a.collection.doing && b.collection.doing) {
+                } else if (a.collection?.doing && b.collection?.doing) {
                     return a.collection.doing - b.collection.doing;
                 } else if (a.rating?.total && b.rating?.total) {
                     return a.rating.total - b.rating.total;
@@ -85,7 +85,7 @@ class BgmKmd extends AppCommand {
                 card.addText(`${item.name}
 ${item.name_cn ? `(font)${item.name_cn}(font)[secondary]` : ''}
 开播时间：${item.air_date}
-被 ${item.collection.doing} 人加入收藏
+被 ${item.collection?.doing || "未知"} 人加入收藏
 评分: ${item.rating?.score || "未知"} 分
 (font)在总共 ${item.rating?.total || "未知"} 个评价中……(font)[secondary]
 (font)${item.rating ? (item.rating.count[10] + item.rating.count[9] + item.rating.count[8]) : "未知"} 人觉得这番很棒！(font)[success]
