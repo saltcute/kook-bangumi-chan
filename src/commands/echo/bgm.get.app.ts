@@ -75,14 +75,21 @@ class BgmKmd extends AppCommand {
             });
             let card = new Card().setSize('lg').setTheme('info');
             card.addTitle(`今天是 ${new Date().getFullYear()} 年 ${new Date().getMonth() + 1} 月 ${new Date().getDate()} 日 ${calendar_today.weekday.cn}`)
-                .addDivider()
+                .addModule({
+                    type: "context",
+                    elements: [{
+                        "type": "kmarkdown",
+                        "content": "数据来自 [Bangumi](https://bgm.tv)"
+                    }]
+                })
+            // .addDivider()
             // .addTitle('今日更新');
             for (let i = 0; i < calendar_today.items.length && i < 5; ++i) {
                 console.log(i);
                 let item = calendar_today.items[i];
                 let imageBuffer = Buffer.from((await axios.get(item.images.large, { responseType: 'arraybuffer' })).data);
                 let uploaded = (await bot.API.asset.create(imageBuffer, { filename: 'image.png' })).url
-                card.addText(`${item.name}
+                card.addDivider().addText(`${item.name}
 ${item.name_cn ? `(font)${item.name_cn}(font)[secondary]` : ''}
 开播时间：${item.air_date}
 被 ${item.collection?.doing || "未知"} 人加入收藏
