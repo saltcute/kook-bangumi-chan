@@ -59,8 +59,8 @@ class BgmKmd extends BaseCommand {
         if (calendar_today && messageId) {
             calendar_today.items.sort((a, b) => {
                 if (a.rank || b.rank) {
-                    let ca = a.rank || 11451419;
-                    let cb = b.rank || 11451419;
+                    let ca: number = a.rank || 11451419;
+                    let cb: number = b.rank || 11451419;
                     return ca - cb
                 } else if (a.collection?.doing && b.collection?.doing) {
                     return a.collection.doing - b.collection.doing;
@@ -70,7 +70,14 @@ class BgmKmd extends BaseCommand {
             });
             let card = new Card().setSize('lg').setTheme('info');
             card.addTitle(`今天是 ${new Date().getFullYear()} 年 ${new Date().getMonth() + 1} 月 ${new Date().getDate()} 日 ${calendar_today.weekday.cn}`)
-                .addDivider()
+                .addModule({
+                    type: "context",
+                    elements: [{
+                        "type": "kmarkdown",
+                        "content": "数据来自 [Bangumi](https://bgm.tv)"
+                    }]
+                })
+            // .addDivider()
             // .addTitle('今日更新');
             for (let i = 0; i < calendar_today.items.length && i < 5; ++i) {
                 // console.log(i);
