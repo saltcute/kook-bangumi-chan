@@ -1,8 +1,6 @@
-import { AppCommand, AppFunc, BaseSession, Card } from 'kbotify';
+import { BaseCommand, CommandFunction, BaseSession, Card } from 'kasumi.js';
 import axios from 'axios';
 import { bot } from 'init/client';
-import auth from 'configs/auth';
-import FormData from 'form-data';
 
 
 type calendar = {
@@ -51,16 +49,13 @@ type calendar = {
     }[]
 }
 
-class BgmKmd extends AppCommand {
-    code = 'get'; // 只是用作标记
-    trigger = 'get'; // 用于触发的文字
-    help = '`.echo kmd 内容`'; // 帮助文字
-    intro = '复读你所说的文字, 并用kmarkdown格式返回。';
-    func: AppFunc<BaseSession> = async (session) => {
+class BgmKmd extends BaseCommand {
+    name = 'get';
+    func: CommandFunction<BaseSession, any> = async (session) => {
         let calendar: calendar[] = (await axios.get("https://api.bgm.tv/calendar")).data;
         let weekday = new Date().getDay(); weekday = (weekday ? weekday : 7) - 1;
         let calendar_today = calendar[weekday];
-        let messageId = (await session.sendCard(new Card().addText("正在加载……"))).msgSent?.msgId;
+        let messageId = (await session.send(new Card().addText("正在加载……")))?.msg_id;
         if (calendar_today && messageId) {
             calendar_today.items.sort((a, b) => {
                 if (a.rank || b.rank) {
@@ -78,11 +73,11 @@ class BgmKmd extends AppCommand {
                 .addDivider()
             // .addTitle('今日更新');
             for (let i = 0; i < calendar_today.items.length && i < 5; ++i) {
-                console.log(i);
+                // console.log(i);
                 let item = calendar_today.items[i];
                 let imageBuffer = Buffer.from((await axios.get(item.images.large, { responseType: 'arraybuffer' })).data);
-                let uploaded = (await bot.API.asset.create(imageBuffer, { filename: 'image.png' })).url
-                card.addText(`${item.name}
+                let uploaded = (await bot.API.asset.create(imageBuffer, { filename: 'image.png' }))?.url
+                if (uploaded) card.addTextWithImage(`${item.name}
 ${item.name_cn ? `(font)${item.name_cn}(font)[secondary]` : ''}
 开播时间：${item.air_date}
 被 ${item.collection?.doing || "未知"} 人加入收藏
@@ -90,13 +85,12 @@ ${item.name_cn ? `(font)${item.name_cn}(font)[secondary]` : ''}
 (font)在总共 ${item.rating?.total || "未知"} 个评价中……(font)[secondary]
 (font)${item.rating ? (item.rating.count[10] + item.rating.count[9] + item.rating.count[8]) : "未知"} 人觉得这番很棒！(font)[success]
 (font)${item.rating ? (item.rating.count[1] + item.rating.count[2] + item.rating.count[3]) : "未知"} 人觉得这番一坨……(font)[warning]
-`, undefined, 'right', {
-                    type: "image",
-                    src: uploaded,
-                    size: "lg"
+`, {
+                    url: uploaded,
+                    position: 'right'
                 });
             }
-            session.updateMessage(messageId, card.toString());
+            session.update(messageId, card);
         }
     };
 }
